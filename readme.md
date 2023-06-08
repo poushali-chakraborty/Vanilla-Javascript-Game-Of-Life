@@ -37,6 +37,6 @@ This code should work on modern web browsers that support HTML5 canvas and audio
 
 ## Credits
 
-This implementation was created by me and is based on the Game of Life devised by John Conway.
+This implementation was created by PC and is based on the Game of Life devised by John Conway.
 
 Have fun exploring the fascinating world of the Game of Life!
