@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Game of Life</title>
+    <style>
+        body {
+            background-color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        
+        canvas {
+            border: 1px solid #fff;
+            background-color: #000;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+
+    <script>
+        // Set up canvas
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        const cellSize = 5;
+        const rows = canvas.height / cellSize;
+        const cols = canvas.width / cellSize;
+        const music=new Audio();
+        music.src='audio.mp3';
+        let started=false;
+
+        // Create grid
+        const grid = [];
+        for (let i = 0; i < rows; i++) {
+            grid[i] = [];
+            for (let j = 0; j < cols; j++) {
+                grid[i][j] = Math.random() > 0.5 ? 1 : 0; // Randomly initialize cells
+            }
+        }
+
+        window.addEventListener('click',(e)=>{
+            if(!started){
+                music.play();
+                started=true;
+            }
+        });
+        
+        // Game loop
+        setInterval(updateGame, 120);
+
+        function updateGame() {
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+
+            // Update grid
+            const newGrid = [];
+            for (let i = 0; i < rows; i++) {
+                newGrid[i] = [];
+                for (let j = 0; j < cols; j++) {
+                    const state = grid[i][j];
+                    const neighbors = countNeighbors(i, j);
+                    let newState = state;
+
+                    // Apply Game of Life rules
+                    if (state === 1 && (neighbors < 2 || neighbors > 3)) {
+                        newState = 0; // Cell dies
+                    } else if (state === 0 && neighbors === 3) {
+                        newState = 1; // Cell comes alive
+                    }
+
+                    newGrid[i][j] = newState;
+
+                    // Draw cell
+                    ctx.beginPath();
+                    ctx.rect(j * cellSize, i * cellSize, cellSize, cellSize);
+                    ctx.fillStyle = newState ? getRandomNeonColor() : "#000";
+                    ctx.fill();
+                    ctx.closePath();
+                }
+            }
+
+            grid.splice(0, grid.length, ...newGrid); // Update grid with new state
+        }
+
+        function countNeighbors(row, col) {
+            let count = 0;
+            for (let i = -1; i <= 1; i++) {
+                for (let j = -1; j <= 1; j++) {
+                    const r = (row + i + rows) % rows;
+                    const c = (col + j + cols) % cols;
+                    count += grid[r][c];
+                }
+            }
+            count -= grid[row][col];
+            return count;
+        }
+
+        function getRandomNeonColor() {
+            const neonColors = ["#f72585", "#4cc9f0", "#e2e84a", "#7209b7", "#3a0ca3", "#f48c06"];
+            return neonColors[Math.floor(Math.random() * neonColors.length)];
+        }
+        music.loop=true;
+    </script>
+</body>
+</html>
